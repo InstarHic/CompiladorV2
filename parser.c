@@ -1027,10 +1027,14 @@ void factor()
                                     }
                                 }
 
-                            else
-                            {
-                                error_handler(44);
-                            }
+                                else
+                                {
+                                    if(flagLlamadaFcion!=1)
+                                    {
+                                        error_handler(44);
+                                    }
+
+                                }
 
                         }
                         }
@@ -1201,7 +1205,7 @@ void variable()
         }
         else
         {
-            if(ts[en_tabla(ultimoID)].ets->ptr_tipo==en_tabla("TIPOARREGLO"))
+            if(ts[en_tabla(ultimoID)].ets->ptr_tipo==en_tabla("TIPOARREGLO") && flagLlamadaFcion!=1) // si el arr se usa como parametro, pueden ponerse los corchetes
             {
                 error_handler(40);
             }
@@ -1216,6 +1220,7 @@ void variable()
 
 void llamada_funcion()
 {
+
     cantParReales=0; //Inicializamos la cant de parametros
     char funcionActual[TAM_LEXEMA]; // usada para referenciar la funcion a la que pertenecen los parametros que se estan contando
     if(sbol->codigo==CIDENT)
@@ -1240,7 +1245,10 @@ void llamada_funcion()
             sbol->codigo == CCONS_ENT || sbol->codigo == CCONS_FLO ||
             sbol->codigo == CCONS_CAR || sbol->codigo == CCONS_STR)
 
+        {flagLlamadaFcion=1;
         lista_expresiones();
+        flagLlamadaFcion=0;
+        }
 
     if (sbol->codigo == CPAR_CIE)
     {

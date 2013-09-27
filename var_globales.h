@@ -24,6 +24,7 @@ EXTERNA char ultimoIdentificadorFuncion[TAM_LEXEMA]; // usado para identificar l
 EXTERNA int flagUltimoIDError;
 EXTERNA int flagExisteIDDeclaracion;
 EXTERNA int flagExisteIDParametro;
+EXTERNA int flagLlamadaFcion;
 
 
 
