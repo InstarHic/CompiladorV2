@@ -66,7 +66,7 @@
 
 
 // ------------------------- STC_TS ---------------------------
-//   Estructura propia de: variables (anonimas), subrutinas y par metros
+//   Estructura propia de: variables (anonimas), subrutinas y parametros
 
 
 typedef struct {

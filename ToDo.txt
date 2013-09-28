@@ -16,10 +16,17 @@ Cuando se hace la llamada a funcion se controla si existe en la tabla y muestra 
 Tener cuidado con proposicion_e_s ya que: 1) no se le da valor a ultimoId cuando lee el identificador, 2) No se considera que variable() no avanza el proximo token.
 El siguiente programa fuente no muestra error cuando deberia: "void f(){} void main(){f=3;}" Deberia decir que el identificador f hace referencia a una funcion y no a una variable.
 
-
+**************************************************
 22.09.2013
+**************************************************
 
 Preguntar que hacer en el lote 9, linea 14
 
 Preguntar (en los controles del main) si no importa que se muestre nuevamente la ultima linea del programa,
 y cómo podriamos solucionarlo.
+
+**************************************************
+27.09.2013
+**************************************************
+Modificar codigo para que en un futuro utilicemos los atributos sintetizados y heredados.
+Notar que ahora el control de retorno sobre la definicion de una funcion se hace en la produccion definicion_de_funcion() luego de proposicion_compuesta(). Esto hace que si ocurre un error en este control, este se muestre en la linea siguiente (por ejemplo en lote con error 9).

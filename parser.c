@@ -132,48 +132,45 @@ int main( int argc,char *argv[])
                 error_handler(41);
                 error_handler(COD_IMP_ERRORES);   //no es una decl valida
             }
-            //else
-            {
-                //Controlamos las condiciones que debe cumplir el Main
-                int posEnTablaMain;
-                posEnTablaMain = en_nivel_actual("main");
-                if (posEnTablaMain == NIL)  // O sea que no existe...
-                {
-                    error_handler(15);
-                    error_handler(COD_IMP_ERRORES);
-                }
-                else // existe :P
-                {
-                    if (ts[posEnTablaMain].ets->clase != CLASFUNC) //controlamos si es una funcion
-                    {
-                        error_handler(43);
-                        error_handler(COD_IMP_ERRORES);
-                    }
-                    else
-                    {
-                        if (ts[posEnTablaMain].ets->ptr_tipo != en_tabla("void") ) // se compara con cero para determinar si su retorno es void
-                        {
-                            error_handler(35);
-                            error_handler(COD_IMP_ERRORES);
-                        }
-                        else
-                        {
-                            if(ts[posEnTablaMain].ets->desc.part_var.sub.cant_par!=0) // controlamos que el main no tenga parametros
-                            {
-                                error_handler(36);
-                                error_handler(COD_IMP_ERRORES);
-                            }
-                            else
-                            {
-                                // El main cumple todas las condiciones evaluadas
-                                // Si no hay errores, mostrar Compilacion Exitosa
-                            }
+            
+			//Controlamos las condiciones que debe cumplir el Main
+			int posEnTablaMain;
+			posEnTablaMain = en_nivel_actual("main");
+			if (posEnTablaMain == NIL)  // O sea que no existe...
+			{
+				error_handler(15);
+				error_handler(COD_IMP_ERRORES);
+			}
+			else // existe :P
+			{
+				if (ts[posEnTablaMain].ets->clase != CLASFUNC) //controlamos si es una funcion
+				{
+					error_handler(43);
+					error_handler(COD_IMP_ERRORES);
+				}
+				else
+				{
+					if (ts[posEnTablaMain].ets->ptr_tipo != en_tabla("void") ) // se compara con cero para determinar si su retorno es void
+					{
+						error_handler(35);
+						error_handler(COD_IMP_ERRORES);
+					}
+					else
+					{
+						if(ts[posEnTablaMain].ets->desc.part_var.sub.cant_par!=0) // controlamos que el main no tenga parametros
+						{
+							error_handler(36);
+							error_handler(COD_IMP_ERRORES);
+						}
+						else
+						{
+							// El main cumple todas las condiciones evaluadas
+							// Si no hay errores, mostrar Compilacion Exitosa
+						}
 
-                        }
-                    }
-                }
-
-            }
+					}
+				}
+			}
         }
         else
         {
@@ -325,6 +322,35 @@ void definicion_funcion()
     else error_handler(20);
 
     proposicion_compuesta();
+    
+    // Controlo si la funcion requiere o no retorno.
+    // Si no lo requiere y existe la proposicion de retorno para la definicion de dicha funcion, mostramos error.
+    // Si lo requiere y no existe la proposicion de retorno para la definicion de dicha funcion, mostramos error.
+    // Sino Ok.
+    
+    int posUltimoIdentificadorFuncion = en_tabla(ultimoIdentificadorFuncion);
+    if (posUltimoIdentificadorFuncion != NIL)
+    {
+		if (ts[posUltimoIdentificadorFuncion].ets->ptr_tipo != en_tabla("void")) //distinto de void
+		{
+			if (!existeReturn)
+			{
+				error_handler(37);
+			}
+		}
+		else
+		{
+			if (existeReturn)
+			{
+				error_handler(45);
+			}
+
+		}
+	}
+	else
+	{
+	}
+	existeReturn=0;
 
 }
 
@@ -642,32 +668,7 @@ void proposicion_compuesta()
 
     if (sbol->codigo == CLLA_CIE)
     {
-        // Controlo que en caso de que la llave cierre el cuerpo de una funcion, si dicha funcion necesita retorno lo tenga
-
         pop_nivel();
-        int posUltimoIdentificadorFuncion = en_nivel_actual(ultimoIdentificadorFuncion);
-        if (posUltimoIdentificadorFuncion >= 0)
-        {
-            if (ts[posUltimoIdentificadorFuncion].ets->ptr_tipo != en_tabla("void")) //distinto de void
-            {
-                if (!existeReturn)
-                {
-                    error_handler(37);
-                    //error_handler(COD_IMP_ERRORES);
-                }
-            }
-            else
-            {
-                if (existeReturn)
-                {
-                    error_handler(45);
-                    //error_handler(COD_IMP_ERRORES);
-                }
-
-            }
-            existeReturn=0;
-
-        }
 
         scanner();
     }
@@ -821,7 +822,7 @@ void proposicion_e_s()
 
         if (sbol->codigo == CSHR) scanner();
         else error_handler(28);
-        /// ¿Aqui no se deberia actualizar el valor de ultimoId?
+        
         strcpy(ultimoID,sbol->lexema);
         if (en_tabla(sbol->lexema) == NIL)
         {
@@ -836,7 +837,6 @@ void proposicion_e_s()
 
         }
         variable();
-        /// Como variable() no pide el proximo token, token sigue teniendo el identificador de la variable causando un error.
 
         while (sbol->codigo == CSHR)
         {
@@ -1056,35 +1056,6 @@ void factor()
         }
         break;
 
-        /*
-            if(sbol->codigo!=CIDENT)
-            {
-                error_handler(16);
-            }
-            else
-            {   // hacemos scanner() para poder saber si se trata de una funcion o de una vble
-                strcpy(ultimoID,sbol->lexema);
-                scanner();
-            }
-            if(sbol->codigo==CPAR_ABR)
-            {
-                if(en_tabla(ultimoID)==NIL)
-                {
-                    error_handler(42);
-                }
-                llamada_funcion();
-            }
-            else
-            {
-                if(en_tabla(ultimoID)==NIL)
-                {
-                    error_handler(16);
-                }
-                variable();
-            }
-
-            break;
-            */
     }
     case CCONS_ENT:
     case CCONS_FLO:
@@ -1116,17 +1087,6 @@ void factor()
 
 void variable()
 {
-
-    /*
-
-        if(en_tabla(ultimoID)==NIL)
-        {
-            // Insertamos la vble no declarada en la TS------------------------------
-
-
-            //---------------------------------------------------------
-        }
-    */
     if(sbol->codigo==CIDENT)
     {
         scanner();

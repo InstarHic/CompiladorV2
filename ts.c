@@ -54,8 +54,8 @@ void pop_nivel ();
 
 
 entrada_TS  *inf_id;	 // es el puntero a la estructura que contiene la
-// informaci¢n de un identificador, la cual es
-// completada previamente a una insercion en TS
+						 // informaci¢n de un identificador, la cual es
+						 // completada previamente a una insercion en TS
 
 int       th[TAM_HASH];   // tabla de hash
 tipo_TS   ts[TAM_TS];     // tabla de simbolos
@@ -283,10 +283,10 @@ int en_nivel_actual(char *id) //busca un identificador en el bloque actual
     while (h >= tb[topeTB])    // busco el identificador dentro del bloque
     {
         if ( ! strcmp(ts[h].ets->nbre, id) )
-            return h;     // lo encontr¢, devuelvo la posici¢n h
+            return h;     // lo encontro, devuelvo la posici¢n h
         h = ts[h].ptr_sinon;
     };
-    return NIL;          // NO lo encontr¢ ==> ident no declarado
+    return NIL;          // NO lo encontro ==> ident no declarado
 };
 
 
@@ -321,7 +321,7 @@ int pushTS(int s, entrada_TS *ptr)
         ts[topeTS].ptr_sinon = s;
         ts[topeTS].ets = ptr;
     };
-    return topeTS;   // retorno la posici¢n donde insert‚
+    return topeTS;   // retorno la posici¢n donde inserto
 };
 
 
