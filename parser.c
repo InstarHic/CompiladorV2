@@ -132,10 +132,10 @@ int main( int argc,char *argv[])
                 error_handler(41);
                 error_handler(COD_IMP_ERRORES);   //no es una decl valida
             }
-            
+
 			//Controlamos las condiciones que debe cumplir el Main
 			int posEnTablaMain;
-			posEnTablaMain = en_nivel_actual("main");
+			posEnTablaMain = en_tabla("main");
 			if (posEnTablaMain == NIL)  // O sea que no existe...
 			{
 				error_handler(15);
@@ -322,12 +322,12 @@ void definicion_funcion()
     else error_handler(20);
 
     proposicion_compuesta();
-    
+
     // Controlo si la funcion requiere o no retorno.
     // Si no lo requiere y existe la proposicion de retorno para la definicion de dicha funcion, mostramos error.
     // Si lo requiere y no existe la proposicion de retorno para la definicion de dicha funcion, mostramos error.
     // Sino Ok.
-    
+
     int posUltimoIdentificadorFuncion = en_tabla(ultimoIdentificadorFuncion);
     if (posUltimoIdentificadorFuncion != NIL)
     {
@@ -335,14 +335,22 @@ void definicion_funcion()
 		{
 			if (!existeReturn)
 			{
-				error_handler(37);
+				///Mirar
+				printf("Linea %d -\n", nro_linea);
+				printf("\t Error 37: Falta return\n");
+				//error_handler(37);
+				//error_handler(COD_IMP_ERRORES);
 			}
 		}
 		else
 		{
 			if (existeReturn)
 			{
-				error_handler(45);
+				///Mirar
+				printf("Linea %d -\n", nro_linea);
+				printf("\t Error 45: La funcion no deberia tener retorno, ya que fue declarada con retorno void\n");
+				//error_handler(45);
+				//error_handler(COD_IMP_ERRORES);
 			}
 
 		}
@@ -822,7 +830,7 @@ void proposicion_e_s()
 
         if (sbol->codigo == CSHR) scanner();
         else error_handler(28);
-        
+
         strcpy(ultimoID,sbol->lexema);
         if (en_tabla(sbol->lexema) == NIL)
         {
