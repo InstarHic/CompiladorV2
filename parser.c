@@ -3,6 +3,38 @@
 *******************************************************************/
 
 #define EXTERNA extern
+// Macros para usar con la fcion first
+#define CONSTANTE 0
+#define DECLARACION 1
+#define DECLARACION_PARAMETRO 2
+#define DECLARACION_VARIABLE 3
+#define DECLARACIONES 4
+#define DECLARADOR_INIT 5
+#define DEFINICION_FUNCION 6
+#define ESPECIFICADOR_DECLARACION 7
+#define ESPECIFICADOR_TIPO 8
+#define EXPRESION 9
+#define EXPRESION_SIMPLE 10
+#define FACTOR 11
+#define LISTA_DECLARACIONES 12
+#define LISTA_DECLARACIONES_PARAM 13
+#define LISTA_EXPRESIONES 14
+#define LISTA_INICIALIZADORES 15
+#define LISTA_PROPOSICIONES 16
+#define LLAMADA_FUNCION 17
+#define PROPOSICION 18
+#define PROPOSICION_COMPUESTA 19
+#define PROPOSICION_E_S 20
+#define PROPOSICION_EXPRESION 21
+#define PROPOSICION_ITERACION 22
+#define PROPOSICION_RETORNO 23
+#define PROPOSICION_SELECCION 24
+#define TERMINO 25
+#define UNIDAD_TRADUCCION 26
+#define VARIABLE 27
+#define LISTA_DECLARACIONES_INIT 28
+//
+
 
 #include <stdio.h>
 #include <stdlib.h> //Agregada para evitar el warning: "incompatible implicit declaration of build-in function"
@@ -10,51 +42,57 @@
 #include "codigos.h"
 #include "var_globales.h"
 #include "ts.h"
+#include "set.h"
+
 
 /*********** prototipos *************/
 
-void unidad_traduccion();
-void declaraciones();
-void especificador_tipo();
-void especificador_declaracion();
-void definicion_funcion();
-void declaracion_variable();
-void lista_declaraciones_param();
-void declaracion_parametro();
-void declarador_init();
-void lista_declacion_init();
-void constante();
-void lista_inicializadores();
-void lista_proposiciones();
-void lista_declaraciones();
-void declaracion();
-void proposicion();
-void proposicion_expresion();
-void proposicion_compuesta();
-void proposicion_seleccion();
-void proposicion_iteracion();
-void proposicion_e_s();
-void proposicion_retorno();
-void variable();
-void expresion();
-void expresion_asignacion();
-void expresion_relacional();
-void expresion_simple();
-void relacion();
-void termino();
-void factor();
-void llamada_funcion();
-void lista_expresiones();
+void unidad_traduccion(set folset);
+void declaraciones(set folset);
+void especificador_tipo(set folset);
+void especificador_declaracion(set folset);
+void definicion_funcion(set folset);
+void declaracion_variable(set folset);
+void lista_declaraciones_param(set folset);
+void declaracion_parametro(set folset);
+void declarador_init(set folset);
+void lista_declacion_init(set folset);
+void constante(set folset);
+void lista_inicializadores(set folset);
+void lista_proposiciones(set folset);
+void lista_declaraciones(set folset);
+void declaracion(set folset);
+void proposicion(set folset);
+void proposicion_expresion(set folset);
+void proposicion_compuesta(set folset);
+void proposicion_seleccion(set folset);
+void proposicion_iteracion(set folset);
+void proposicion_e_s(set folset);
+void proposicion_retorno(set folset);
+void variable(set folset);
+void expresion(set folset);
+void expresion_asignacion(set folset);
+void expresion_relacional(set folset);
+void expresion_simple(set folset);
+void relacion(set folset);
+void termino(set folset);
+void factor(set folset);
+void llamada_funcion(set folset);
+void lista_expresiones(set folset);
+
 
 
 void scanner ();
+
+set first(int);
+void test(set,set,int);
 
 /********** variables globales ************/
 
 
 
 token *sbol;
-
+set folsetLlamada;
 
 extern FILE *yyin;
 
@@ -88,6 +126,7 @@ int main( int argc,char *argv[])
     //INIT------------------------------
     nro_linea=0;
     existeReturn=0;
+    folsetLlamada=cons(NADA,NADA);
     //INIT------------------------------
     if (argc != 3) // El programa se debe llamar con 3 argumentos
     {
@@ -108,7 +147,7 @@ int main( int argc,char *argv[])
     if (strcmp(argv[1],"-c")*(strcmp(argv[1], "-g")))
     {
         // Entra por esta rama si la multiplicacion de las comparaciones da como resultado un numero distinto de cero, indicando que el segundo argumento no es valido. Esto ya que la función strcmp retorna cero cuando las cadenas pasadas como parametro son iguales.
-        error_handler(53);
+        error_handler(83);
         error_handler(COD_IMP_ERRORES);
         exit(1);
     }
@@ -125,11 +164,11 @@ int main( int argc,char *argv[])
             pushTB(); //Crea el nivel 0
 
             scanner();
-
-            unidad_traduccion();
+            folsetLlamada=une(folsetLlamada,cons(NADA,CEOF));
+            unidad_traduccion(folsetLlamada);
             if (sbol->codigo != CEOF)
             {
-                error_handler(41);
+                error_handler(84);
                 error_handler(COD_IMP_ERRORES);   //no es una decl valida
             }
 
@@ -183,18 +222,22 @@ int main( int argc,char *argv[])
 
 /********* funciones del parser ***********/
 
-void unidad_traduccion()
+void unidad_traduccion(set folset)
 {
-
+    test(first(UNIDAD_TRADUCCION),folset,50);
     while (sbol->codigo == CVOID || sbol->codigo == CCHAR ||
             sbol->codigo == CINT || sbol->codigo == CFLOAT)
-        declaraciones();
+        {
+            folsetLlamada=une(folset,first(DECLARACIONES));
+            declaraciones(folsetLlamada);
+        }
 }
 
-void declaraciones()
+void declaraciones(set folset)
 {
 
-    especificador_tipo();
+    folsetLlamada= une(folset,une(cons(NADA,CIDENT),first(ESPECIFICADOR_DECLARACION)));
+    especificador_tipo(folsetLlamada);
     if (sbol->codigo == CIDENT)
     {
         flagExisteIDDeclaracion=1;
@@ -212,12 +255,12 @@ void declaraciones()
         flagExisteIDDeclaracion=0;
         error_handler(16);
     }
-    especificador_declaracion();
+    especificador_declaracion(folset);
 }
 
-void especificador_tipo()
+void especificador_tipo(set folset)
 {
-
+    test(first(ESPECIFICADOR_TIPO),folset,51);
     switch (sbol->codigo)
     {
     case CVOID:
@@ -247,11 +290,12 @@ void especificador_tipo()
     default:
         error_handler(17);
     }
+    test(folset,cons(NADA,NADA),52);
 }
 
-void especificador_declaracion()
+void especificador_declaracion(set folset)
 {
-
+    test(first(ESPECIFICADOR_DECLARACION),folset,54);
     switch (sbol->codigo)
     {
     case CPAR_ABR:
@@ -271,7 +315,7 @@ void especificador_declaracion()
         {
             //entra si no se puso el id de la fcion
         }
-        definicion_funcion();
+        definicion_funcion(folset);
         break;
     }
     case CASIGNAC:
@@ -297,7 +341,7 @@ void especificador_declaracion()
         {
 
         }
-        declaracion_variable();
+        declaracion_variable(folset);
         break;
 
     }
@@ -308,20 +352,24 @@ void especificador_declaracion()
 
 }
 
-void definicion_funcion()
+void definicion_funcion(set folset)
 {
+    test(first(DEFINICION_FUNCION),une(folset,une(first(LISTA_DECLARACIONES_PARAM),une(first(PROPOSICION_COMPUESTA),cons(CPAR_CIE,NADA)))),53);
 
     if (sbol->codigo == CPAR_ABR) scanner();
     else error_handler(19);
 
     if (sbol->codigo == CVOID || sbol->codigo == CCHAR ||
             sbol->codigo == CINT || sbol->codigo == CFLOAT)
-        lista_declaraciones_param();
+        {
+        folsetLlamada= une(folset,une(cons(CPAR_CIE,NADA),first(PROPOSICION_COMPUESTA)));
+        lista_declaraciones_param(folsetLlamada);
+        }
 
     if (sbol->codigo == CPAR_CIE) scanner();
     else error_handler(20);
 
-    proposicion_compuesta();
+    proposicion_compuesta(folset);
 
     // Controlo si la funcion requiere o no retorno.
     // Si no lo requiere y existe la proposicion de retorno para la definicion de dicha funcion, mostramos error.
@@ -362,24 +410,26 @@ void definicion_funcion()
 
 }
 
-void lista_declaraciones_param()
+void lista_declaraciones_param(set folset)
 {
 
-    declaracion_parametro();
+    folsetLlamada= une(folset,une(cons(CCOMA,NADA),first(DECLARACION_PARAMETRO)));
+    declaracion_parametro(folsetLlamada);
 
     while (sbol->codigo ==CCOMA)
     {
         scanner();
-
-        declaracion_parametro();
+        folsetLlamada= une(folset,une(cons(CCOMA,NADA),first(DECLARACION_PARAMETRO)));
+        declaracion_parametro(folsetLlamada);
     }
 }
 
-void declaracion_parametro()
+void declaracion_parametro(set folset)
 {
     int fueAmp=0; // usado para indicar el tipo de pasaje (1: referencia, 0: valor)
 
-    especificador_tipo();
+    folsetLlamada= une(folset,cons(CAMPER|CCOR_ABR|CCOR_CIE,CIDENT));
+    especificador_tipo(folsetLlamada);
 
     if (sbol->codigo == CAMPER)
     {
@@ -396,7 +446,7 @@ void declaracion_parametro()
         strcpy(inf_id->nbre,ultimoID);
         if(ultimoTipo==en_tabla("void")) // controlamos que el tipo del par no sea void
         {
-            error_handler(50);
+            error_handler(80);
             inf_id->ptr_tipo=en_tabla("TIPOERROR");
         }
         else
@@ -437,7 +487,7 @@ void declaracion_parametro()
         {
             if(fueAmp) //el arreglo no puede ser de pasaje por referencia
             {
-                error_handler(51);
+                error_handler(81);
                 ts[en_tabla(ultimoID)].ets->ptr_tipo=en_tabla("TIPOARREGLO");
                 ts[en_tabla(ultimoID)].ets->desc.part_var.arr.ptero_tipo_base=en_tabla("TIPOERROR");
             }
@@ -492,10 +542,13 @@ void declaracion_parametro()
         //entra si el id de la fcion o de un par no esta
     }
     fueAmp=0;
+
+    test(folset,cons(NADA,NADA),55);
 }
 
-void lista_declaraciones_init()
+void lista_declaraciones_init(set folset)
 {
+    test(first(LISTA_DECLARACIONES_INIT),une(folset,une(first(DECLARADOR_INIT),cons(CCOMA,CIDENT))),57);
 
     if (sbol->codigo == CIDENT)
     {
@@ -524,7 +577,8 @@ void lista_declaraciones_init()
         flagExisteIDDeclaracion=0;
     }
 
-    declarador_init();
+    folsetLlamada= une(folset,une(first(DECLARADOR_INIT),cons(CCOMA,CIDENT)));
+    declarador_init(folsetLlamada);
 
     while (sbol->codigo == CCOMA)
     {
@@ -552,41 +606,51 @@ void lista_declaraciones_init()
         }
         else error_handler(16);
 
-        declarador_init();
+        folsetLlamada= une(folset,une(first(DECLARADOR_INIT),cons(CCOMA,CIDENT)));
+        declarador_init(folsetLlamada);
     }
 
 }
 
 
-void declaracion_variable()
+void declaracion_variable(set folset)
 {
 
-    declarador_init();
+    folsetLlamada= une(folset,une(cons(CCOMA|CPYCOMA,NADA),first(LISTA_DECLARACIONES_INIT)));
+    declarador_init(folsetLlamada);
 
     if (sbol->codigo == CCOMA)
     {
         scanner();
 
-        lista_declaraciones_init();
+        folsetLlamada= une(folset,cons(CPYCOMA,NADA));
+        lista_declaraciones_init(folsetLlamada);
     }
 
     if (sbol->codigo == CPYCOMA) scanner();
     else error_handler(22);
 
+    test(folset,cons(NADA,NADA),54); /// se controla aca en lugar de al final de especificador_declaracion
+
 }
 
 
-void declarador_init()
+void declarador_init(set folset)
 {
 
+    test(first(DECLARADOR_INIT),une(folset,cons(CCOR_CIE|CLLA_ABR|CLLA_CIE,NADA)),58);
+    /// VER TEST!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     switch (sbol->codigo)
     {
     case CASIGNAC:
     {
         scanner();
-        constante();
+        constante(folset);
         break;
     }
+    case CCOR_CIE:
+    case CLLA_ABR:
+    case CLLA_CIE:  ///VER!!!!!!!!!!!!!!!!!!!!!!!
     case CCOR_ABR:
     {
         scanner();
@@ -605,7 +669,8 @@ void declarador_init()
             if (sbol->codigo == CCONS_ENT)
             {
                 ts[en_nivel_actual(ultimoID)].ets->desc.part_var.arr.cant_elem=atoi(sbol->lexema);
-                constante();
+                folsetLlamada= une(folset,une(cons(CCOR_CIE|CASIGNAC|CLLA_ABR|CLLA_CIE,NADA),first(LISTA_INICIALIZADORES)));
+                constante(folsetLlamada);
             }
         }
         else
@@ -622,7 +687,8 @@ void declarador_init()
             if (sbol->codigo == CLLA_ABR) scanner();
             else error_handler(23);
 
-            lista_inicializadores();
+            folsetLlamada= une(folset,cons(CLLA_CIE,NADA));
+            lista_inicializadores(folsetLlamada);
 
             if (sbol->codigo == CLLA_CIE) scanner();
             else error_handler(24);
@@ -632,25 +698,28 @@ void declarador_init()
         break;
     }
     }
+    test(folset,cons(NADA,NADA),59);
 }
 
-void lista_inicializadores()
+void lista_inicializadores(set folset)
 {
 
-    constante();
+    folsetLlamada= une(folset,une(cons(CCOMA,NADA),first(CONSTANTE)));
+    constante(folsetLlamada);
 
     while (sbol->codigo == CCOMA)
     {
         scanner();
-
-        constante();
+        folsetLlamada= une(folset,une(cons(CCOMA,NADA),first(CONSTANTE)));
+        constante(folsetLlamada);
     }
 
 }
 
 
-void proposicion_compuesta()
+void proposicion_compuesta(set folset)
 {
+    test(first(PROPOSICION_COMPUESTA),une(folset,une(first(LISTA_DECLARACIONES),une(first(LISTA_PROPOSICIONES),cons(CLLA_CIE,NADA)))),60);
 
     if (sbol->codigo == CLLA_ABR)
     {
@@ -661,7 +730,11 @@ void proposicion_compuesta()
     if (sbol->codigo == CVOID || sbol->codigo == CCHAR ||
             sbol->codigo == CINT || sbol->codigo == CFLOAT)
 
-        lista_declaraciones();
+        {
+            folsetLlamada= une(folset,une(cons(CLLA_CIE,NADA),first(LISTA_PROPOSICIONES)));
+            lista_declaraciones(folsetLlamada);
+        }
+
 
     if (sbol->codigo == CLLA_ABR || sbol->codigo == CMAS ||
             sbol->codigo == CMENOS || sbol->codigo == CIDENT ||
@@ -672,7 +745,11 @@ void proposicion_compuesta()
             sbol->codigo == CIN || sbol->codigo == COUT ||
             sbol->codigo == CPYCOMA || sbol->codigo == CRETURN)
 
-        lista_proposiciones();
+        {
+            folsetLlamada= une(folset,cons(CLLA_CIE,NADA));
+            lista_proposiciones(folsetLlamada);
+        }
+
 
     if (sbol->codigo == CLLA_CIE)
     {
@@ -682,35 +759,46 @@ void proposicion_compuesta()
     }
     else error_handler(24);
 
+    test(folset,cons(NADA,NADA),61);
 }
-void lista_declaraciones()
+void lista_declaraciones(set folset)
 {
 
-    declaracion();
+    folsetLlamada= une(folset,first(DECLARACION));
+    declaracion(folsetLlamada);
 
     while (sbol->codigo == CVOID || sbol->codigo == CCHAR ||
             sbol->codigo == CINT || sbol->codigo == CFLOAT)
 
-        declaracion();
+        {
+            folsetLlamada= une(folset,first(DECLARACION));
+            declaracion(folsetLlamada);
+        }
+
 
 }
 
-void declaracion()
+void declaracion(set folset)
 {
 
-    especificador_tipo();
+    folsetLlamada= une(folset,une(cons(CPYCOMA,NADA),first(LISTA_DECLARACIONES_INIT)));
+    especificador_tipo(folsetLlamada);
 
-    lista_declaraciones_init();
+    folsetLlamada=une(folset,cons(CPYCOMA,NADA));
+    lista_declaraciones_init(folsetLlamada);
 
     if (sbol->codigo == CPYCOMA) scanner();
     else error_handler(22);
 
+    test(folset,cons(NADA,NADA),62);
+
 }
 
-void lista_proposiciones()
+void lista_proposiciones(set folset)
 {
 
-    proposicion();
+    folsetLlamada= une(folset,first(PROPOSICION));
+    proposicion(folsetLlamada);
 
     while (sbol->codigo == CLLA_ABR || sbol->codigo == CMAS ||
             sbol->codigo == CMENOS || sbol->codigo == CIDENT ||
@@ -721,30 +809,35 @@ void lista_proposiciones()
             sbol->codigo == CIN || sbol->codigo == COUT ||
             sbol->codigo == CPYCOMA || sbol->codigo == CRETURN)
 
-        proposicion();
+
+            {
+                folsetLlamada= une(folset,first(PROPOSICION));
+                proposicion(folsetLlamada);
+            }
+
 
 }
 
-void proposicion()
+void proposicion(set folset)
 {
-
+    test(first(PROPOSICION),folset,63);
     switch (sbol->codigo)
     {
     case CLLA_ABR:
     {
         pushTB(); // en definicion de fcion no se llama a esto, y por lo tanto los bloques se dan de alta correctamente
-        proposicion_compuesta();
+        proposicion_compuesta(folset);
         break;
     }
     case CWHILE:
-        proposicion_iteracion();
+        proposicion_iteracion(folset);
         break;
     case CIF:
-        proposicion_seleccion();
+        proposicion_seleccion(folset);
         break;
     case CIN:
     case COUT:
-        proposicion_e_s();
+        proposicion_e_s(folset);
         break;
     case CMAS:
     case CMENOS:
@@ -756,18 +849,19 @@ void proposicion()
     case CCONS_CAR:
     case CCONS_STR:
     case CPYCOMA:
-        proposicion_expresion();
+        proposicion_expresion(folset);
         break;
     case CRETURN:
-        proposicion_retorno();
+        proposicion_retorno(folset);
         break;
     default:
         error_handler(25);
     }
 }
 
-void proposicion_iteracion()
+void proposicion_iteracion(set folset)
 {
+    //test(); No va porque solo tiene una invocacion, y es condicional
 
     if (sbol->codigo == CWHILE) scanner();
     else error_handler(26);
@@ -779,18 +873,20 @@ void proposicion_iteracion()
     }
     else error_handler(19);
 
-    expresion();
+    folsetLlamada= une(folset,une(cons(CPAR_CIE,NADA),first(PROPOSICION)));
+    expresion(folsetLlamada);
 
     if (sbol->codigo == CPAR_CIE) scanner();
     else error_handler(20);
 
-    proposicion();
+    proposicion(folset);
 
 }
 
 
-void proposicion_seleccion()
+void proposicion_seleccion(set folset)
 {
+    //test(); No va porque solo tiene una invocacion, y es condicional
 
     if (sbol->codigo == CIF) scanner();
     else error_handler(27);
@@ -802,24 +898,27 @@ void proposicion_seleccion()
     }
     else error_handler(19);
 
-    expresion();
+    folsetLlamada= une(folset,une(cons(CPAR_CIE|CELSE,NADA),first(PROPOSICION)));
+    expresion(folsetLlamada);
 
     if (sbol->codigo == CPAR_CIE) scanner();
     else error_handler(20);
 
-    proposicion();
+    folsetLlamada= une(folset,une(cons(CELSE,NADA),first(PROPOSICION)));
+    proposicion(folsetLlamada);
 
     if (sbol->codigo == CELSE)
     {
         scanner();
 
-        proposicion();
+        proposicion(folset);
     }
 
 }
 
-void proposicion_e_s()
+void proposicion_e_s(set folset)
 {
+    //test(); No va porque solo tiene una invocacion, y es condicional
 
     switch(sbol->codigo)
     {
@@ -844,7 +943,8 @@ void proposicion_e_s()
             insertarTS();
 
         }
-        variable();
+        folsetLlamada= une(folset,une(cons(CSHR|CPYCOMA,NADA),first(VARIABLE)));
+        variable(folsetLlamada);
 
         while (sbol->codigo == CSHR)
         {
@@ -864,7 +964,8 @@ void proposicion_e_s()
                 insertarTS();
 
             }
-            variable();
+            folsetLlamada= une(folset,une(cons(CSHR|CPYCOMA,NADA),first(VARIABLE)));
+            variable(folsetLlamada);
         }
         if (sbol->codigo == CPYCOMA) scanner();
         else error_handler(22);
@@ -875,11 +976,13 @@ void proposicion_e_s()
         scanner();
         if (sbol->codigo == CSHL) scanner();
         else error_handler(29);
-        expresion();
+        folsetLlamada= une(folset,une(cons(CSHL|CPYCOMA,NADA),first(EXPRESION)));
+        expresion(folsetLlamada);
         while (sbol->codigo == CSHL)
         {
             scanner();
-            expresion();
+            folsetLlamada= une(folset,une(cons(CSHL|CPYCOMA,NADA),first(EXPRESION)));
+            expresion(folsetLlamada);
         }
         if (sbol->codigo == CPYCOMA) scanner();
         else error_handler(22);
@@ -888,50 +991,60 @@ void proposicion_e_s()
     default:
         error_handler(25);
     }
+    test(folset,cons(NADA,NADA),64);
 }
 
 
-void proposicion_retorno()
+void proposicion_retorno(set folset)
 {
+    //test(); No va porque solo tiene una invocacion, y es condicional
 
     scanner();
-    expresion();
+    folsetLlamada= une(folset,cons(CPYCOMA,NADA));
+    expresion(folsetLlamada);
     if (sbol->codigo == CPYCOMA) scanner();
     else error_handler(22);
 
     existeReturn=1;
     /// Aqui colocaremos el codigo para controlar el tipo de retorno. i think.
 
+    test(folset,cons(NADA,NADA),65);
 }
 
 
-void proposicion_expresion()
+void proposicion_expresion(set folset)
 {
-
+    //test(); No va porque solo tiene una invocacion, y es condicional
     if (sbol->codigo == CMAS || sbol->codigo == CMENOS ||
             sbol->codigo == CIDENT ||
             sbol->codigo == CPAR_ABR || sbol->codigo == CNEG ||
             sbol->codigo == CCONS_ENT || sbol->codigo == CCONS_FLO ||
             sbol->codigo == CCONS_CAR || sbol->codigo == CCONS_STR)
 
-        expresion();
+        {
+            folsetLlamada= une(folset,cons(CPYCOMA,NADA));
+            expresion(folsetLlamada);
+        }
+
 
     if (sbol->codigo == CPYCOMA) scanner();
     else error_handler(22);
+
+    test(folset,cons(NADA,NADA),66);
 }
 
 
-void expresion()
+void expresion(set folset)
 {
-
-    expresion_simple();
+    folsetLlamada= une(folset,une(cons(CASIGNAC,CDISTINTO|CIGUAL|CMENOR|CMEIG|CMAYOR|CMAIG),first(EXPRESION)));
+    expresion_simple(folsetLlamada);
 
     switch (sbol->codigo)
     {
     case CASIGNAC:
     {
         scanner();
-        expresion();
+        expresion(folset);
         break;
     }
     case CDISTINTO:
@@ -942,43 +1055,49 @@ void expresion()
     case CMAIG:
     {
         scanner();
-        expresion();
+        expresion(folset);
         break;
     }
     }
 }
 
 
-void expresion_simple()
+void expresion_simple(set folset)
 {
+    test(first(EXPRESION_SIMPLE),une(folset,cons(NADA,COR)),67);
 
     if (sbol->codigo == CMAS || sbol->codigo == CMENOS) scanner();
 
-    termino();
+    folsetLlamada= une(folset,une(cons(NADA,CMAS|CMENOS|COR),first(TERMINO)));
+    termino(folsetLlamada);
 
-    while (sbol->codigo == CMAS || sbol->codigo == CMENOS || sbol->codigo == COR)
+    while (sbol->codigo == CMAS || sbol->codigo == CMENOS || sbol->codigo == COR || in(sbol->codigo,first(TERMINO)))
     {
         scanner();
-        termino();
+        folsetLlamada= une(folset,une(cons(NADA,CMAS|CMENOS|COR),first(TERMINO)));
+        termino(folsetLlamada);
     }
 
 }
 
-void termino()
+void termino(set folset)
 {
 
-    factor();
+    folsetLlamada= une(folset,une(cons(NADA,CMULT|CDIV|CAND),first(FACTOR)));
+    factor(folsetLlamada);
 
-    while (sbol->codigo == CMULT || sbol->codigo == CDIV || sbol->codigo == CAND)
+    while (sbol->codigo == CMULT || sbol->codigo == CDIV || sbol->codigo == CAND || in(sbol->codigo,first(FACTOR)))
     {
         scanner();
-        factor();
+        folsetLlamada= une(folset,une(cons(NADA,CMULT|CDIV|CAND),first(FACTOR)));
+        factor(folsetLlamada);
     }
 
 }
 
-void factor()
+void factor(set folset)
 {
+    test(first(FACTOR),folset,68);
 
     switch (sbol->codigo)
     {
@@ -996,19 +1115,19 @@ void factor()
             inf_id->ptr_tipo=en_tabla("TIPOERROR");
             inf_id->desc.nivel=getTopeTB();
             insertarTS();
-            variable();
+            variable(folset);
         }
         else
         {
             if (ts[en_tabla(sbol->lexema)].ets->clase == CLASVAR)
             {
-                variable();
+                variable(folset);
             }
             else
             {
                 if(ts[en_tabla(sbol->lexema)].ets->clase == CLASFUNC)
                 {
-                    llamada_funcion();
+                    llamada_funcion(folset);
                 }
                 else
                 {
@@ -1024,7 +1143,8 @@ void factor()
                                 if(sbol->codigo==CCOR_ABR)
                                 {
                                     scanner();
-                                    expresion();
+                                    folsetLlamada= une(folset,cons(CCOR_CIE,NADA));
+                                    expresion(folsetLlamada);
                                     if(sbol->codigo==CCOR_CIE)
                                     {
                                         scanner();
@@ -1068,15 +1188,17 @@ void factor()
     case CCONS_ENT:
     case CCONS_FLO:
     case CCONS_CAR:
-        constante();
+        constante(folset);
         break;
     case CCONS_STR:
         scanner();
-        break;
+        break;/* errores de recuperacion de errores */
+
     case CPAR_ABR:
     {
         scanner();
-        expresion();
+        folsetLlamada= une(folset,cons(CPAR_CIE,NADA));
+        expresion(folsetLlamada);
         if (sbol->codigo == CPAR_CIE) scanner();
         else error_handler(20);
         break;
@@ -1084,17 +1206,19 @@ void factor()
     case CNEG:
     {
         scanner();
-        expresion();
+        expresion(folset);
         break;
     }
     default:
         error_handler(31);
     }
+    test(folset,cons(NADA,NADA),69);
 
 }
 
-void variable()
+void variable(set folset)
 {
+    test(first(VARIABLE),une(folset,une(first(EXPRESION),cons(CCOR_ABR|CCOR_CIE,NADA))),70);
     if(sbol->codigo==CIDENT)
     {
         scanner();
@@ -1161,7 +1285,8 @@ void variable()
             /// Uso correcto. Acá van chequeos de tipo y eso...
         }
         scanner(); //consumimos el corchete que abre
-        expresion();
+        folsetLlamada= une(folset,cons(CCOR_CIE,NADA));
+        expresion(folsetLlamada);
         if (sbol->codigo == CCOR_CIE) scanner();
         else error_handler(21);
     }
@@ -1184,11 +1309,12 @@ void variable()
         }
     }
     flagUltimoIDError=0;
+    test(folset,cons(NADA,NADA),71);
 }
 
-void llamada_funcion()
+void llamada_funcion(set folset)
 {
-
+    test(first(LLAMADA_FUNCION),une(folset,une(first(LISTA_EXPRESIONES),cons(CPAR_ABR|CPAR_CIE,NADA))),56);
     cantParReales=0; //Inicializamos la cant de parametros
     char funcionActual[TAM_LEXEMA]; // usada para referenciar la funcion a la que pertenecen los parametros que se estan contando
     if(sbol->codigo==CIDENT)
@@ -1213,8 +1339,10 @@ void llamada_funcion()
             sbol->codigo == CCONS_ENT || sbol->codigo == CCONS_FLO ||
             sbol->codigo == CCONS_CAR || sbol->codigo == CCONS_STR)
 
-        {flagLlamadaFcion=1;
-        lista_expresiones();
+        {
+        flagLlamadaFcion=1;
+        folsetLlamada= une(folset,cons(CPAR_CIE,NADA));
+        lista_expresiones(folsetLlamada);
         flagLlamadaFcion=0;
         }
 
@@ -1224,35 +1352,37 @@ void llamada_funcion()
         {
             if(cantParReales!=ts[en_tabla(funcionActual)].ets->desc.part_var.sub.cant_par) //controlamos que la cant de pars actuales concuerde con la de formales
             {
-                error_handler(52);
+                error_handler(82);
             }
         }
 
         scanner();
     }
     else error_handler(20);
-
+    test(folset,cons(NADA,NADA),72);
 }
 
-void lista_expresiones()
+void lista_expresiones(set folset)
 {
 
-    expresion();
+    folsetLlamada= une(folset,une(cons(CCOMA,NADA),first(EXPRESION)));
+    expresion(folsetLlamada);
     cantParReales++; //por cada parametro aumentamos el contador
 
-    while (sbol->codigo == CCOMA)
+    while (sbol->codigo == CCOMA )
     {
-        scanner();
 
-        expresion();
+        scanner();
+        folsetLlamada= une(folset,une(cons(CCOMA,NADA),first(EXPRESION)));
+        expresion(folsetLlamada);
         cantParReales++;
     }
 
 }
 
-void constante()
+void constante(set folset)
 {
-
+    test(first(CONSTANTE),folset,73);
     switch (sbol->codigo)
     {
     case CCONS_ENT:
@@ -1267,10 +1397,62 @@ void constante()
     default:
         error_handler(38);
     }
+    test(folset,cons(NADA,NADA),74);
 
 }
 
 
+set first(int metodo)
+{
+    switch(metodo)
+    {
+        case CONSTANTE: return cons(NADA,CCONS_ENT|CCONS_FLO|CCONS_CAR);
+        case DECLARACION: return cons(CVOID|CCHAR|CINT|CFLOAT,NADA);
+        case DECLARACIONES: return cons(CVOID|CCHAR|CINT|CFLOAT,NADA);
+        case DECLARACION_PARAMETRO:  return cons(CVOID|CCHAR|CINT|CFLOAT,NADA);
+        case DECLARACION_VARIABLE: return cons(CASIGNAC|CCOR_ABR|CCOMA|CPYCOMA,NADA);
+        ///case DECLARADOR_INIT: return cons(CASIGNAC|CCOR_ABR,NADA);
+        case DECLARADOR_INIT: return cons(CASIGNAC|CCOR_ABR|CCOMA|CPYCOMA,NADA);
+        case DEFINICION_FUNCION: return cons(CPAR_ABR,NADA);
+        case ESPECIFICADOR_DECLARACION: return cons(CPAR_ABR|CASIGNAC|CCOR_ABR|CCOMA|CPYCOMA,NADA);
+        case ESPECIFICADOR_TIPO: return cons(CVOID|CCHAR|CINT|CFLOAT,NADA);
+        case EXPRESION: return cons(CPAR_ABR,CMAS|CMENOS|CNEG|CIDENT|CCONS_CAR|CCONS_ENT|CCONS_FLO|CCONS_STR);
+        case EXPRESION_SIMPLE: return cons(CPAR_ABR,CMAS|CMENOS|CNEG|CIDENT|CCONS_CAR|CCONS_ENT|CCONS_FLO|CCONS_STR);
+        case FACTOR: return cons(CPAR_ABR,CNEG|CIDENT|CCONS_CAR|CCONS_ENT|CCONS_FLO|CCONS_STR);
+        case LISTA_DECLARACIONES: return cons(CVOID|CCHAR|CINT|CFLOAT,NADA);
+        case LISTA_DECLARACIONES_PARAM: return cons(CVOID|CCHAR|CINT|CFLOAT,NADA);
+        case LISTA_EXPRESIONES: return cons(CPAR_ABR,CMAS|CMENOS|CNEG|CIDENT|CCONS_CAR|CCONS_ENT|CCONS_FLO|CCONS_STR);
+        case LISTA_INICIALIZADORES: return cons(NADA,CCONS_CAR|CCONS_ENT|CCONS_FLO);
+        case LISTA_PROPOSICIONES: return cons(CWHILE|CIF|CIN|COUT|CPYCOMA|CPAR_ABR|CLLA_ABR,CCONS_CAR|CCONS_ENT|CCONS_FLO|CCONS_STR|CIDENT|CMAS|CMENOS|CNEG|CRETURN);
+        case LLAMADA_FUNCION: return cons(NADA,CIDENT);
+        case PROPOSICION: return cons(CWHILE|CIF|CIN|COUT|CPYCOMA|CPAR_ABR|CLLA_ABR,CCONS_CAR|CCONS_ENT|CCONS_FLO|CCONS_STR|CIDENT|CMAS|CMENOS|CNEG|CRETURN);
+        case PROPOSICION_COMPUESTA: return cons(CLLA_ABR,NADA);
+        case PROPOSICION_EXPRESION: return cons(CPAR_ABR|CPYCOMA,CMAS|CMENOS|CNEG|CIDENT|CCONS_CAR|CCONS_ENT|CCONS_FLO|CCONS_STR);
+        case PROPOSICION_E_S: return cons(CIN|COUT,NADA);
+        case PROPOSICION_ITERACION: return cons(CWHILE,NADA);
+        case PROPOSICION_RETORNO: return cons(CRETURN,NADA);
+        case PROPOSICION_SELECCION: return cons(CIF,NADA);
+        case TERMINO: return cons(CPAR_ABR,CNEG|CCONS_CAR|CCONS_ENT|CCONS_FLO|CCONS_STR|CIDENT);
+        case UNIDAD_TRADUCCION: return cons(CVOID|CCHAR|CINT|CFLOAT,NADA);
+        case VARIABLE: return cons(NADA,CIDENT);
+        case LISTA_DECLARACIONES_INIT: return cons(NADA,CIDENT);
+    }
+}
+
+
+void test(set cjto1,set cjto2,int n)
+{
+    if(!in(sbol->codigo,cjto1))
+    {
+
+        error_handler(n);
+        cjto1= une(cjto1,cjto2);
+        while(!in(sbol->codigo,cjto1))
+        {
+            scanner();
+        }
+    }
+}
 
 
 

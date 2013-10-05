@@ -161,19 +161,110 @@ void error_print (int ne)
     case 49:
         printf("\t Error %d: El  tipo base de una variable no puede ser void\n",ne);
         break;
+        /* errores de recuperacion de errores */
     case 50:
-        printf("\t Error %d: El  tipo base de un parametro no puede ser void\n",ne);
+        printf("\t Error %d: Al inicio del programa. \n", ne);
         break;
     case 51:
-        printf("\t Error %d: El  tipo de pasaje de un parametro arreglo no puede ser por referencia\n",ne);
+        printf("\t Error %d: Símbolo inesperado o falta especificador de tipo. \n", ne);
         break;
     case 52:
-        printf("\t Error %d: Cantidad de parametros actuales invalida\n",ne);
+        printf("\t Error %d: Símbolo inesperado después de especificador de tipo. \n", ne);
         break;
     case 53:
-        printf("\t Error : Argumento invalido\n");
+        printf("\t Error %d: Símbolo inesperado o falta símb. al comienzo de especif. de declaración\n", ne);
         break;
     case 54:
+        printf("\t Error %d: Símbolo inesperado después de especificador de declaración \n", ne);
+        break;
+    case 55:
+        printf("\t Error %d: Símbolo inesperado después de declarar un parámetro. \n", ne);
+        break;
+    case 56:
+        printf("\t Error %d: Símbolo inesperado al comienzo de llamada a función. \n", ne);
+        break;
+    case 57:
+        printf("\t Error %d: Símbolo inesperado o falta símb. al comienzo de lista decl. init.\n", ne);
+        break;
+    case 58:
+        printf("\t Error %d: Símbolo inesperado al comienzo de declarador init. \n", ne);
+        break;
+    case 59:
+        printf("\t Error %d: Símbolo inesperado después de declarador init. \n", ne);
+        break;
+    case 60:
+        printf("\t Error %d: Símbolo inesperado o falta símb. al comienzo de proposición compuesta. \n", ne);
+        break;
+    case 61:
+        printf("\t Error %d: Símbolo inesperado después de proposición compuesta. \n", ne);
+        break;
+    case 62:
+        printf("\t Error %d: Símbolo inesperado después de declaración. \n", ne);
+        break;
+    case 63:
+        printf("\t Error %d: Símbolo inesperado o falta símb. al comienzo de proposición. \n", ne);
+        break;
+    case 64:
+        printf("\t Error %d: Símbolo inesperado después de proposición entrada - salida. \n", ne);
+        break;
+    case 65:
+        printf("\t Error %d: Símbolo inesperado después de proposición retorno. \n", ne);
+        break;
+    case 66:
+        printf("\t Error %d: Símbolo inesperado después de proposición expresión. \n", ne);
+        break;
+    case 67:
+        printf("\t Error %d: Símbolo inesperado o falta símb. al comienzo de expresión simple. \n", ne);
+        break;
+    case 68:
+        printf("\t Error %d: Símbolo inesperado o falta símb. al comienzo de factor. \n", ne);
+        break;
+    case 69:
+        printf("\t Error %d: Símbolo inesperado después de factor. \n", ne);
+        break;
+    case 70:
+        printf("\t Error %d: Símbolo inesperado o falta símb. al comienzo de variable. \n", ne);
+        break;
+    case 71:
+        printf("\t Error %d: Símbolo inesperado después de variable. \n", ne);
+        break;
+    case 72:
+        printf("\t Error %d: Símbolo inesperado después de llamada a función. \n", ne);
+        break;
+    case 73:
+        printf("\t Error %d: Símbolo inesperado o falta símb. al comienzo de constante\n", ne);
+        break;
+    case 74:
+        printf("\t Error %d: Símbolo inesperado despues de constante,\n", ne);
+        break;
+    case 75:
+        printf("\t Error %d: Falta , \n", ne);
+        break;
+    case 76:
+        printf("\t Error %d: Falta >> \n", ne);
+        break;
+    case 77:
+        printf("\t Error %d: Falta << \n", ne);
+        break;
+    case 78:
+        printf("\t Error %d: Falta *, /, &&, +, -, ||, = u operador de relación \n", ne);
+        break;
+    case 79:
+        printf("\t Error %d: Falta = \n", ne);
+        break;
+    case 80:
+        printf("\t Error %d: El  tipo base de un parametro no puede ser void\n",ne);
+        break;
+    case 81:
+        printf("\t Error %d: El  tipo de pasaje de un parametro arreglo no puede ser por referencia\n",ne);
+        break;
+    case 82:
+        printf("\t Error %d: Cantidad de parametros actuales invalida\n",ne);
+        break;
+    case 83:
+        printf("\t Error : Argumento invalido\n");
+        break;
+    case 84:
         printf("\t Error : Se esperaba Fin de Archivo\n");
         break;
     }

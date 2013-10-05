@@ -1,38 +1,38 @@
-﻿<unidad de traduccion> = {void,char,int,float}
-<declaraciones> = {void,char,int,float}
-<especificador de tipo> = {void,char,int,float}
-<especificador de declaracion> = {=,[,(,λ}
+﻿<unidad de traduccion> = {void char int float}
+<declaraciones> = {void char int float}
+<especificador de tipo> = {void char int float}
+<especificador de declaracion> = {= [ ( , ;}
 <definicion de funcion> = {(}
-<lista declaracion de parametros> = {void,char,int,float}
-<declaracion de variable> = {=,[,λ}
-<lista declaraciones init> = {a..z,A..Z}
-<declarador init> = {=,[,λ}
-<lista de inicializadores> = {0..9,'}
+<lista declaracion de parametros> = {void char int float}
+<declaracion de variable> = {= [ , ;}
+<lista declaraciones init> = {a..z A..Z}
+<declarador init> = {= [ λ}
+<lista de inicializadores> = {0..9 '}
 <proposicion compuesta> = {{}
-<lista de declaraciones> = {void,char,int,float}
-<declaracion> = {void,char,int,float}
-<lista de proposiciones> = {+,-,a..z,A..Z,0..9,',!,(,",;,{,if,while,cin,cout,return}
-<proposicion> = {+,-,a..z,A..Z,0..9,',!,(,",;,{,if,while,cin,cout,return}
+<lista de declaraciones> = {void char int float}
+<declaracion> = {void char int float}
+<lista de proposiciones> = {+ - a..z A..Z 0..9 ' ! ( " ; { if while cin cout return}
+<proposicion> = {+ - a..z A..Z 0..9 ' ! ( " ; { if while cin cout return}
 <proposicion de iteracion> = {while}
 <proposicion de seleccion> = {if}
-<proposicion de entrada/salida> = {cin,cout}
+<proposicion de entrada/salida> = {cin cout}
 <proposicon de retorno> = {return}
-<proposicion expresion> = {+,-,a..z,A..Z,0..9,',!,(,",;}
-<expresion> = {+,-,a..z,A..Z,0..9,',!,(,"}
-<expresion relacional> = {+,-,a..z,A..Z,0..9,',!,(,"}
-<relacion> = {!=,==,<,<=,>=,>}
-<expresion simple> = {+,-,a..z,A..Z,0..9,',!,(,"}
-<termino> = {a..z,A..Z,0..9,',!,(,"}
-<factor> = {a..z,A..Z,0..9,',!,(,"}
-<variable> = {a..z,A..Z}
-<llamada a funcion> = {a..z,A..Z}
-<lista de expresiones> = {+,-,a..z,A..Z,0..9,',!,(,"}
-<constante> = {0..9,'}
+<proposicion expresion> = {+ - a..z A..Z 0..9 ' ! ( " ;}
+<expresion> = {+ - a..z A..Z 0..9 ' ! ( "}
+<expresion relacional> = {+ - a..z A..Z 0..9 ' ! ( "}
+<relacion> = {!= == < <= >= >}
+<expresion simple> = {+ - a..z A..Z 0..9 ' ! ( "}
+<termino> = {a..z A..Z 0..9 ' ! ( "}
+<factor> = {a..z A..Z 0..9 ' ! ( "}
+<variable> = {a..z A..Z}
+<llamada a funcion> = {a..z A..Z}
+<lista de expresiones> = {+ - a..z A..Z 0..9 ' ! ( "}
+<constante> = {0..9 '}
 <constante numerica> = {0..9}
 <numero> = {0..9}
 <digito> = {0..9}
 <constante caracter> = {'}
 <constante string> = {"}
-<identificador> = {a..z,A..Z}
-<letra> = {a..z,A..Z}
-<ascii> = {a..z,A..Z,0..9,caracteresEspeciales}
+<identificador> = {a..z A..Z}
+<letra> = {a..z A..Z}
+<ascii> = {a..z A..Z 0..9 caracteresEspeciales}

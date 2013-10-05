@@ -30,3 +30,22 @@ y cómo podriamos solucionarlo.
 **************************************************
 Modificar codigo para que en un futuro utilicemos los atributos sintetizados y heredados.
 Notar que ahora el control de retorno sobre la definicion de una funcion se hace en la produccion definicion_de_funcion() luego de proposicion_compuesta(). Esto hace que si ocurre un error en este control, este se muestre en la linea siguiente (por ejemplo en lote con error 9).
+**************************************************
+1.10.2013
+**************************************************
+Implementar Test
+Agregar parametros de cada funcion cuando se llaman
+Agregar parametros a los test
+
+4.10.2013
+*************************************************
+preguntar por que en la gramatica en papel expresion esta distinto al parser
+
+ver si especif_dcl y proposicion llevan test al final (ambos pueden terminar con lambda, será eso??)
+
+al first de DECLARADOR_INIT le agregamos COMA y PYCOMA, porque sino tira error en los lotes sin error
+
+
+
+
+
